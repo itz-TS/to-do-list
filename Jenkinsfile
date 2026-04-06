@@ -6,13 +6,19 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo "Code already checked out by Jenkins"
+                echo "Code already checked out"
             }
         }
 
-        stage('Code Quality Check') {
+        stage('Install Dependencies') {
             steps {
-                bat 'dir'
+                bat 'npm install'
+            }
+        }
+
+        stage('Code Quality Check (ESLint)') {
+            steps {
+                bat 'npx eslint script.js'
             }
         }
 
@@ -31,7 +37,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                bat 'echo Deployment Successful'
+                bat 'start index.html'
             }
         }
 
