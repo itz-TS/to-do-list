@@ -22,10 +22,9 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
+        stage('Unit Test (Jest)') {
             steps {
-                bat 'echo Running tests...'
-                bat 'echo Tests Passed'
+                bat 'npx jest'
             }
         }
 
@@ -37,7 +36,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                 bat 'echo Deployment completed successfully'
+                bat 'echo Deployment completed successfully'
             }
         }
 

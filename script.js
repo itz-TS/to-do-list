@@ -1,104 +1,120 @@
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let tasks = [];
 
-displayTasks();
+// Run only in browser (not in Jest)
+if (typeof window !== "undefined") {
+    tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    displayTasks();
+}
 
+// ✅ Add Task
 function addTask(){
 
-let input = document.getElementById("taskInput");
+    if (typeof document === "undefined") return;
 
-let text = input.value.trim();
+    let input = document.getElementById("taskInput");
+    let text = input.value.trim();
 
-if(text === ""){
-alert("Enter a task");
-return;
+    if(!isValidTask(text)){
+        alert("Enter a task");
+        return;
+    }
+
+    let task = {
+        text: text,
+        time: new Date().toLocaleTimeString(),
+        completed: false
+    };
+
+    tasks.push(task);
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    input.value = "";
+
+    displayTasks();
 }
 
-let task = {
-text:text,
-time:new Date().toLocaleTimeString(),
-completed:false
-};
-
-tasks.push(task);
-
-localStorage.setItem("tasks",JSON.stringify(tasks));
-
-input.value="";
-
-displayTasks();
-
-}
-
+// ✅ Display Tasks
 function displayTasks(){
 
-let pending = document.getElementById("pendingTasks");
-let completed = document.getElementById("completedTasks");
+    if (typeof document === "undefined") return;
 
-pending.innerHTML="";
-completed.innerHTML="";
+    let pending = document.getElementById("pendingTasks");
+    let completed = document.getElementById("completedTasks");
 
-tasks.forEach((task,index)=>{
+    pending.innerHTML = "";
+    completed.innerHTML = "";
 
-let li=document.createElement("li");
+    tasks.forEach((task, index) => {
 
-if(task.completed){
-li.classList.add("completed");
+        let li = document.createElement("li");
+
+        if(task.completed){
+            li.classList.add("completed");
+        }
+
+        li.innerHTML = `
+        <input type="checkbox" ${task.completed ? "checked" : ""} onchange="toggleTask(${index})">
+
+        <span class="taskText">${task.text}</span>
+
+        <span class="time">${task.time}</span>
+
+        <button class="edit-btn" onclick="editTask(${index})">✏️</button>
+
+        <button class="delete-btn" onclick="deleteTask(${index})">❌</button>
+        `;
+
+        if(task.completed){
+            completed.appendChild(li);
+        } else {
+            pending.appendChild(li);
+        }
+
+    });
 }
 
-li.innerHTML = `
-<input type="checkbox" ${task.completed ? "checked":""} onchange="toggleTask(${index})">
-
-<span class="taskText">${task.text}</span>
-
-<span class="time">${task.time}</span>
-
-<button class="edit-btn" onclick="editTask(${index})">✏️</button>
-
-<button class="delete-btn" onclick="deleteTask(${index})">❌</button>
-`;
-
-if(task.completed){
-completed.appendChild(li);
-}else{
-pending.appendChild(li);
-}
-
-});
-
-}
-
+// ✅ Toggle Task
 function toggleTask(index){
 
-tasks[index].completed = !tasks[index].completed;
+    tasks[index].completed = !tasks[index].completed;
 
-localStorage.setItem("tasks",JSON.stringify(tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
-displayTasks();
-
+    displayTasks();
 }
 
+// ✅ Delete Task
 function deleteTask(index){
 
-tasks.splice(index,1);
+    tasks.splice(index, 1);
 
-localStorage.setItem("tasks",JSON.stringify(tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
-displayTasks();
-
+    displayTasks();
 }
 
+// ✅ Edit Task
 function editTask(index){
 
-let newText = prompt("Edit your task:",tasks[index].text);
+    let newText = prompt("Edit your task:", tasks[index].text);
 
-if(newText!==null && newText.trim()!==""){
+    if(newText !== null && isValidTask(newText)){
 
-tasks[index].text = newText;
+        tasks[index].text = newText;
 
-localStorage.setItem("tasks",JSON.stringify(tasks));
+        localStorage.setItem("tasks", JSON.stringify(tasks));
 
-displayTasks();
-
+        displayTasks();
+    }
 }
 
+// ✅ Validation Function (TESTABLE)
+function isValidTask(task) {
+    return task.trim() !== "";
+}
+
+// ✅ Export for Jest
+if (typeof module !== "undefined") {
+    module.exports = { isValidTask };
 }
