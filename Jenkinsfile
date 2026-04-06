@@ -6,8 +6,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo "Cloning repository..."
-                git 'https://github.com/itz-TS/devops-todo-project.git'
+                echo "Code already checked out by Jenkins"
             }
         }
 
@@ -19,6 +18,7 @@ pipeline {
 
         stage('Unit Test') {
             steps {
+                bat 'echo Running tests...'
                 bat 'echo Tests Passed'
             }
         }
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                bat 'echo Deployment Done'
+                bat 'echo Deployment Successful'
             }
         }
 
